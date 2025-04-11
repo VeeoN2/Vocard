@@ -40,8 +40,8 @@ class ExecuteModal(discord.ui.Modal):
 
         self.add_item(
             discord.ui.TextInput(
-                label="Code Runner",
-                placeholder="Input Your Code",
+                label="Konsola poleceń",
+                placeholder="Wpisz swój kod/komende",
                 style=discord.TextStyle.long,
                 default=self.code
             )
@@ -61,31 +61,31 @@ class AddNodeModal(discord.ui.Modal):
         self.add_item(
             discord.ui.TextInput(
                 label="Host",
-                placeholder="Enter the lavalink host e.g 0.0.0.0"
+                placeholder="Adres host'a Lavalink np. 0.0.0.0"
             )
         )
         self.add_item(
             discord.ui.TextInput(
                 label="Port",
-                placeholder="Enter the lavalink port e.g 2333"
+                placeholder="Port serwera Lavalink np. 2333"
             )
         )
         self.add_item(
             discord.ui.TextInput(
-                label="Password",
-                placeholder="Enter the lavalink password"
+                label="Hasło",
+                placeholder="Hasło serwera Lavalink"
             )
         )
         self.add_item(
             discord.ui.TextInput(
-                label="Secure",
-                placeholder="Specify if your Lavalink uses SSL. Enter 'true' or 'false'"
+                label="SSL",
+                placeholder="Tryb SSL - wpisz 'true' lub 'false'"
             )
         )
         self.add_item(
             discord.ui.TextInput(
-                label="Identifier",
-                placeholder="Enter a name for your lavalink server"
+                label="Identyfikator",
+                placeholder="Wprowadź przyjazną nazwę serwera Lavalink"
             )
         )
         
@@ -99,7 +99,7 @@ class AddNodeModal(discord.ui.Modal):
                 "identifier": self.children[4].value
             }
         except Exception:
-            return await interaction.response.send_message("Some of your input is invalid! Please try again.", ephemeral=True)
+            return await interaction.response.send_message("Niektóre dane są nieprawidłowe, spróbuj ponownie.", ephemeral=True)
         
         await interaction.response.defer()
         try:
@@ -108,7 +108,7 @@ class AddNodeModal(discord.ui.Modal):
                 logger=func.logger,
                 **config
             )
-            await interaction.followup.send(f"Node {self.children[4].value} is connected!", ephemeral=True)
+            await interaction.followup.send(f"Połączono z serwerem {self.children[4].value}!", ephemeral=True)
             await self.view.message.edit(embed=self.view.build_embed(), view=self.view)
             
         except Exception as e:
@@ -119,8 +119,8 @@ class CogsDropdown(discord.ui.Select):
         self.bot: commands.Bot = bot
 
         super().__init__(
-            placeholder="Select a cog to reload...",
-            options=[discord.SelectOption(label="All", description="All the cogs")] +
+            placeholder="Wybierz cog do przeładowania...",
+            options=[discord.SelectOption(label="All", description="Wszystkie cog'i")] +
             [
                 discord.SelectOption(label=name.capitalize(), description=cog.description[:50])
                 for name, cog in bot.cogs.items()
@@ -136,9 +136,9 @@ class CogsDropdown(discord.ui.Select):
             else:
                 await self.bot.reload_extension(f"cogs.{selected}")
         except Exception as e:
-            return await interaction.response.send_message(f"Unable to reload `{selected}`! Reason: {e}", ephemeral=True)
+            return await interaction.response.send_message(f"Nie można przeładować `{selected}`! Powód: {e}", ephemeral=True)
 
-        await interaction.response.send_message(f"Reloaded `{selected}` successfully!", ephemeral=True)
+        await interaction.response.send_message(f"Pomyślnie przeładowano: `{selected}` !", ephemeral=True)
 
 class NodesDropdown(discord.ui.Select):
     def __init__(self, bot: commands.Bot):
@@ -146,7 +146,7 @@ class NodesDropdown(discord.ui.Select):
         self.view: NodesPanel
     
         super().__init__(
-            placeholder="Select a node to edit...",
+            placeholder="Wybierz serwer lavalink do edytowania...",
             options=self.get_nodes()
         )
     
@@ -154,12 +154,12 @@ class NodesDropdown(discord.ui.Select):
         nodes = [
             discord.SelectOption(
                 label=name,
-                description=("🟢 Connected" if node._available else "🔴 Disconnected") + f" - Players: {node.player_count} ({node.latency if node._available else 0:.2f}ms)")
+                description=("🟢 Połączony" if node._available else "🔴 Rozłączony") + f" - Liczba odtwarzaczy: {node.player_count} ({node.latency if node._available else 0:.2f}ms)")
             for name, node in voicelink.NodePool._nodes.items()
         ]
         
         if not nodes:
-            nodes = [discord.SelectOption(label="The node could not be found!")]
+            nodes = [discord.SelectOption(label="Serwer lavalink nie został odnaleziony!")]
             
         return nodes
     
@@ -170,7 +170,7 @@ class NodesDropdown(discord.ui.Select):
         selected_node = self.values[0]
         node = voicelink.NodePool._nodes.get(selected_node, None)
         if not node:
-            return await interaction.response.send_message("The node could not be found!", ephemeral=True)
+            return await interaction.response.send_message("Serwer lavalink nie został odnaleziony!", ephemeral=True)
         
         self.view.selected_node = node
         await interaction.response.defer()
@@ -278,10 +278,10 @@ class NodesPanel(discord.ui.View):
         
     def build_embed(self) -> discord.Embed:
         self.update_btn_status()
-        embed = discord.Embed(title="📡 Nodes Panel", color=func.settings.embed_color)
+        embed = discord.Embed(title="📡 Panel serwerów lavalink", color=func.settings.embed_color)
         
         if not voicelink.NodePool._nodes:
-            embed.description = "```There are no nodes are connected!```"
+            embed.description = "```Brak połączonych serwerów Lavalink!```"
         
         else:
             for name, node in voicelink.NodePool._nodes.items():
@@ -291,19 +291,19 @@ class NodesPanel(discord.ui.View):
                 if node._available:
                     total_memory = node.stats.used + node.stats.free
                     embed.add_field(
-                        name=f"{name} Node - 🟢 Connected",
-                        value=f"```• ADDRESS: {node._host}:{node._port}\n" \
-                            f"• PLAYERS: {len(node._players)}\n" \
+                        name=f"Serwer {name} - 🟢 Połączony",
+                        value=f"```• ADRES: {node._host}:{node._port}\n" \
+                            f"• LICZBA ODTWARZACZY: {len(node._players)}\n" \
                             f"• CPU:     {node.stats.cpu_process_load:.1f}%\n" \
                             f"• RAM:     {func.format_bytes(node.stats.free)}/{func.format_bytes(total_memory, True)} ({(node.stats.free/total_memory) * 100:.1f}%)\n"
-                            f"• LATENCY: {node.latency:.2f}ms\n" \
-                            f"• UPTIME:  {func.time(node.stats.uptime)}```"
+                            f"• OPÓŹNIENIE: {node.latency:.2f}ms\n" \
+                            f"• CZAS DZIAŁANIA:  {func.time(node.stats.uptime)}```"
                     )
                 else:
                     embed.add_field(
-                        name=f"{name} Node - 🔴 Disconnected",
-                        value=f"```• ADDRESS: {node._host}:{node._port}\n" \
-                            f"• PLAYERS: {len(node._players)}\nNo extra data is available for display```",
+                        name=f"Serwer {name} - 🔴 Rozłączony",
+                        value=f"```• ADRES: {node._host}:{node._port}\n" \
+                            f"• LICZBA ODTWARZACZY: {len(node._players)}\nBrak innych danych do wyświetlenia```",
                     )
                     
         return embed
@@ -311,15 +311,15 @@ class NodesPanel(discord.ui.View):
     async def on_error(self, interaction: discord.Interaction, error, item) -> None:
         return await interaction.followup.send(error, ephemeral=True)
     
-    @discord.ui.button(label="Add", emoji="➕", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Dodaj", emoji="➕", style=discord.ButtonStyle.green)
     async def add(self, interaction: discord.Interaction, button: discord.ui.Button):
-        modal = AddNodeModal(self, title="Create Node")
+        modal = AddNodeModal(self, title="Dodaj serwer Lavalink")
         await interaction.response.send_modal(modal)
     
-    @discord.ui.button(label="Remove", emoji="➖", style=discord.ButtonStyle.red, disabled=True)
+    @discord.ui.button(label="Usuń", emoji="➖", style=discord.ButtonStyle.red, disabled=True)
     async def remove(self, interaction: discord.Interaction, button: discord.ui.Button):
         if not self.selected_node:
-            return await interaction.response.send_message("Please ensure that you have selected a node!", ephemeral=True)
+            return await interaction.response.send_message("Upewnij się że wybrałeś serwer Lavalink do usunięcia!", ephemeral=True)
 
         identifier = self.selected_node._identifier
         await self.selected_node.disconnect(remove_from_pool=True)
@@ -327,9 +327,9 @@ class NodesPanel(discord.ui.View):
         self.selected_node = None
         
         await self.message.edit(embed=self.build_embed(), view=self)
-        await interaction.response.send_message(f"Removed {identifier} Node from the bot.", ephemeral=True)
+        await interaction.response.send_message(f"Usunięto serwer {identifier} z bota", ephemeral=True)
         
-    @discord.ui.button(label="Reconnect", disabled=True, row=1)
+    @discord.ui.button(label="Połącz ponownie", disabled=True, row=1)
     async def reconnect(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         if self.selected_node.is_connected:
@@ -337,14 +337,14 @@ class NodesPanel(discord.ui.View):
             await self.selected_node.connect()
             await self.message.edit(embed=self.build_embed(), view=self)
     
-    @discord.ui.button(label="Connect", disabled=True, row=1)
+    @discord.ui.button(label="Połącz", disabled=True, row=1)
     async def connect(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         if not self.selected_node.is_connected:
             await self.selected_node.connect()
             await self.message.edit(embed=self.build_embed(), view=self)
         
-    @discord.ui.button(label="Disconnect", style=discord.ButtonStyle.red, disabled=True, row=1)
+    @discord.ui.button(label="Rozłącz", style=discord.ButtonStyle.red, disabled=True, row=1)
     async def disconnect(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         if self.selected_node.is_connected:
@@ -365,27 +365,27 @@ class DebugView(discord.ui.View):
 
         super().__init__(timeout=timeout)
 
-    @discord.ui.button(label='Command', emoji="▶️", style=discord.ButtonStyle.green)
+    @discord.ui.button(label='Komenda', emoji="▶️", style=discord.ButtonStyle.green)
     async def run_command(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.panel.execute(interaction)
     
-    @discord.ui.button(label='Cogs', emoji="⚙️")
+    @discord.ui.button(label="Cog'i", emoji="⚙️")
     async def reload_cog(self, interaction: discord.Interaction, button: discord.ui.Button):
-        return await interaction.response.send_message("Reload Cogs", view=CogsView(self.bot), ephemeral=True)
+        return await interaction.response.send_message("Przeładuj Cog'i", view=CogsView(self.bot), ephemeral=True)
     
-    @discord.ui.button(label="Re-Sync", emoji="🔄")
+    @discord.ui.button(label="Zsynchronizuj", emoji="🔄")
     async def sync(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message("🔄 Synchronizing all your commands and language settings!", ephemeral=True)
+        await interaction.response.send_message("🔄 Synchronizowanie wszystkich ustawień or zasobów językowych!", ephemeral=True)
         await self.bot.tree.sync()
-        await interaction.edit_original_response(content="✅ All commands and settings have been successfully synchronized!")
+        await interaction.edit_original_response(content="✅ Wszystkie komendy i ustawienia zostały zsynchronizowane pomyślnie!")
     
-    @discord.ui.button(label="Nodes", emoji="📡")
+    @discord.ui.button(label="Serwery Lavalink", emoji="📡")
     async def nodes(self, interaction: discord.Interaction, button: discord.ui.Button):
         view = NodesPanel(self.bot)
         await interaction.response.send_message(embed=view.build_embed(), view=view, ephemeral=True)
         view.message = await interaction.original_response()
     
-    @discord.ui.button(label="Stop-Bot", emoji="🔴")
+    @discord.ui.button(label="Zatrzymaj bota", emoji="🔴")
     async def stop(self, interaction: discord.Interaction, button: discord.ui.Button):
         for name in self.bot.cogs.copy().keys():
             try:

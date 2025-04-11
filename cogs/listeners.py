@@ -40,7 +40,7 @@ class Listeners(commands.Cog):
         bot.loop.create_task(self.restore_last_session_players())
         
     async def start_nodes(self) -> None:
-        """Connect and intiate nodes."""
+        """Połącz i zainicjuj node'y"""
         for n in func.settings.nodes.values():
             try:
                 await self.voicelink.create_node(
@@ -52,7 +52,7 @@ class Listeners(commands.Cog):
                 func.logger.error(f'Node {n["identifier"]} is not able to connect! - Reason: {e}')
 
     async def restore_last_session_players(self) -> None:
-        """Re-establish connections for players from the last session."""
+        """Nawiąż ponownie połącznie z odtwarzaczami z poprzedniej sesji"""
         await self.bot.wait_until_ready()
         players = func.open_json(func.LAST_SESSION_FILE_NAME)
         if not players:
@@ -145,7 +145,7 @@ class Listeners(commands.Cog):
     async def on_voicelink_track_exception(self, player: voicelink.Player, track, error: dict):
         try:
             player._track_is_stuck = True
-            await player.context.send(f"{error['message']} The next song will begin in the next 5 seconds.", delete_after=10)
+            await player.context.send(f"{error['message']} Następny utwór rozpocznie się za 5 sekund", delete_after=10)
         except:
             pass
 

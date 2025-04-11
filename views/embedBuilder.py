@@ -45,10 +45,10 @@ class Modal(discord.ui.Modal):
 class Dropdown(discord.ui.Select):
     def __init__(self):
         options = [
-            discord.SelectOption(label='Active', description='The controller embed when music is playing', emoji='🟩'),
-            discord.SelectOption(label='Inactive', description='The controller embed when music is not playing', emoji='🟥'),
+            discord.SelectOption(label='Aktywny', description='Kontroler podczas odtwarzania muzyki', emoji='🟩'),
+            discord.SelectOption(label='Niekatywny', description='Kontroler podczas bezczynności', emoji='🟥'),
         ]
-        super().__init__(placeholder='Select a embed to edit...', min_values=1, max_values=1, options=options)
+        super().__init__(placeholder='Wybierz kontroler do edycji...', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
         self.view.embedType = self.values[0].lower()
@@ -85,37 +85,37 @@ class EmbedBuilderView(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction):
         return interaction.user == self.author
 
-    @discord.ui.button(label="Edit Content", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Edytuj zawartość", style=discord.ButtonStyle.blurple)
     async def edit_content(self, interaction: discord.Interaction, button: discord.ui.Button):
         data = self.data.get(self.embedType, {})
         items = [
             discord.ui.TextInput(
-                label="Title",
-                placeholder="The title of the embed",
+                label="Tytuł",
+                placeholder="Tytuł utworu",
                 style=discord.TextStyle.paragraph,
                 max_length=1000,
                 default=data.get("title", {}).get("name"),
                 required=False
             ),
             discord.ui.TextInput(
-                label="Url",
-                placeholder="The url of the title",
+                label="URL",
+                placeholder="URL tytułu",
                 style=discord.TextStyle.short,
                 max_length=100,
                 default=data.get("title", {}).get("url"),
                 required=False
             ),
             discord.ui.TextInput(
-                label="Color",
-                placeholder="The color of the embed",
+                label="Kolor",
+                placeholder="Kolor wiadomości osadzonej",
                 style=discord.TextStyle.short,
                 max_length=100,
                 default=data.get("color"),
                 required=False
             ),
             discord.ui.TextInput(
-                label="Description",
-                placeholder="The description of the title",
+                label="Opis",
+                placeholder="Opis odtwarzanej pozycji",
                 style=discord.TextStyle.paragraph,
                 max_length=200,
                 default=data.get("description"),
@@ -123,7 +123,7 @@ class EmbedBuilderView(discord.ui.View):
             )
         ]
 
-        modal = Modal(items, title="Edit Content")
+        modal = Modal(items, title="Edytuj zawartość")
         await interaction.response.send_modal(modal)
         await modal.wait()
 
@@ -142,12 +142,12 @@ class EmbedBuilderView(discord.ui.View):
 
         return await interaction.edit_original_response(embed=self.build_embed())
 
-    @discord.ui.button(label="Edit Author",)
+    @discord.ui.button(label="Edytuj Nagłówek",)
     async def edit_author(self, interaction: discord.Interaction, button: discord.ui.Button):
         data = self.data.get(self.embedType, {})
         items = [
             discord.ui.TextInput(
-                label="Name",
+                label="Nagłówek",
                 placeholder="The name of the author",
                 style=discord.TextStyle.paragraph,
                 max_length=200,
@@ -155,7 +155,7 @@ class EmbedBuilderView(discord.ui.View):
                 required=False
             ),
             discord.ui.TextInput(
-                label="Url",
+                label="URL",
                 placeholder="The url of the author",
                 style=discord.TextStyle.short,
                 max_length=100,
@@ -163,7 +163,7 @@ class EmbedBuilderView(discord.ui.View):
                 required=False
             ),
             discord.ui.TextInput(
-                label="Icon Url",
+                label="URL ikony",
                 placeholder="The icon url of the author",
                 style=discord.TextStyle.short,
                 max_length=100,
@@ -172,7 +172,7 @@ class EmbedBuilderView(discord.ui.View):
             ),
         ]
 
-        modal = Modal(items, title="Edit Author")
+        modal = Modal(items, title="Edytuj Nagłówek")
         await interaction.response.send_modal(modal)
         await modal.wait()
 
@@ -190,21 +190,21 @@ class EmbedBuilderView(discord.ui.View):
 
         return await interaction.edit_original_response(embed=self.build_embed())
     
-    @discord.ui.button(label="Edit Image")
+    @discord.ui.button(label="Edytuj Obraz")
     async def edit_image(self, interaction: discord.Interaction, button: discord.ui.Button):
         data = self.data.get(self.embedType, {})
         items = [
             discord.ui.TextInput(
-                label="Thumbnail",
-                placeholder="The url of the thumbnail",
+                label="Miniaturka",
+                placeholder="Adres URL miniaturki",
                 style=discord.TextStyle.short,
                 max_length=200,
                 default=data.get("thumbnail"),
                 required=False
             ),
             discord.ui.TextInput(
-                label="Image",
-                placeholder="The url of the image",
+                label="Obraz",
+                placeholder="Adres URL obrazu",
                 style=discord.TextStyle.short,
                 max_length=100,
                 default=data.get("image"),
@@ -212,7 +212,7 @@ class EmbedBuilderView(discord.ui.View):
             )
         ]
 
-        modal = Modal(items, title="Edit Image")
+        modal = Modal(items, title="Edytuj Obraz")
         await interaction.response.send_modal(modal)
         await modal.wait()
 
@@ -223,21 +223,21 @@ class EmbedBuilderView(discord.ui.View):
 
         return await interaction.edit_original_response(embed=self.build_embed())
     
-    @discord.ui.button(label="Edit Footer")
+    @discord.ui.button(label="Edytuj stopke")
     async def edit_footer(self, interaction: discord.Interaction, button: discord.ui.Button):
         data = self.data.get(self.embedType, {})
         items = [
             discord.ui.TextInput(
-                label="Text",
-                placeholder="The text of the footer",
+                label="Tekst",
+                placeholder="Tekst w stopce",
                 style=discord.TextStyle.paragraph,
                 max_length=200,
                 default=data.get("footer", {}).get("text"),
                 required=False
             ),
             discord.ui.TextInput(
-                label="Icon Url",
-                placeholder="The url of the icon",
+                label="URL ikony",
+                placeholder="Adres URL ikony",
                 style=discord.TextStyle.short,
                 max_length=100,
                 default=data.get("footer", {}).get("icon_url"),
@@ -245,7 +245,7 @@ class EmbedBuilderView(discord.ui.View):
             )
         ]
 
-        modal = Modal(items, title="Edit Footer")
+        modal = Modal(items, title="Edytuj stopke")
         await interaction.response.send_modal(modal)
         await modal.wait()
 
@@ -258,25 +258,25 @@ class EmbedBuilderView(discord.ui.View):
 
         return await interaction.edit_original_response(embed=self.build_embed())
     
-    @discord.ui.button(label="Add Field", style=discord.ButtonStyle.green, row=1)
+    @discord.ui.button(label="Dodaj pole", style=discord.ButtonStyle.green, row=1)
     async def add_field(self, interaction: discord.Interaction, button: discord.ui.Button):
         data = self.data.get(self.embedType)
         items = [
             discord.ui.TextInput(
-                label="Name",
-                placeholder="The name of the field",
+                label="Nazwa",
+                placeholder="Nazwa pola",
                 style=discord.TextStyle.paragraph,
                 max_length=256
             ),
             discord.ui.TextInput(
-                label="Value",
-                placeholder="The value of the field",
+                label="Zawartość",
+                placeholder="Zawartość pola",
                 style=discord.TextStyle.long,
                 max_length=1024
             ),
             discord.ui.TextInput(
                 label="Inline",
-                placeholder="The inline of the field, e.g. True or False",
+                placeholder="Inline pola, np. True lub False",
                 style=discord.TextStyle.short
             )
         ]
@@ -285,9 +285,9 @@ class EmbedBuilderView(discord.ui.View):
             data["fields"] = []
 
         if len(data["fields"]) >= 25:
-            return await interaction.response.send_message("You have already reached the maximum of fields!", ephemeral=True)
+            return await interaction.response.send_message("Osiągnąłeś maksymalną liczbę pól!", ephemeral=True)
         
-        modal = Modal(items, title="Add Field")
+        modal = Modal(items, title="Dodaj Pole")
         await interaction.response.send_modal(modal)
         await modal.wait()
 
@@ -300,12 +300,12 @@ class EmbedBuilderView(discord.ui.View):
 
         return await interaction.edit_original_response(embed=self.build_embed())
     
-    @discord.ui.button(label="Remove Field", style=discord.ButtonStyle.red, row=1)
+    @discord.ui.button(label="Usuń pole", style=discord.ButtonStyle.red, row=1)
     async def remove_field(self, interaction: discord.Interaction, button: discord.ui.Button):
         items = [
             discord.ui.TextInput(
                 label="Index",
-                placeholder="The number of fields to remove, e.g. 1",
+                placeholder="Numer pola do usunięcia, np. 1",
                 style=discord.TextStyle.short
             )
         ]
@@ -315,16 +315,16 @@ class EmbedBuilderView(discord.ui.View):
             data["fields"] = []
 
         if len(data["fields"]) == 0:
-            return await interaction.response.send_message("There are no fields to remove!", ephemeral=True)
+            return await interaction.response.send_message("Brak pól do usunięcia!", ephemeral=True)
         
-        modal = Modal(items, title="Remove Field")
+        modal = Modal(items, title="Usuń pole")
         await interaction.response.send_modal(modal)
         await modal.wait()
 
         try:
             del data["fields"][int(modal.values["index"])]
         except:
-            return await interaction.followup.send("Can't found the field", ephemeral=True)
+            return await interaction.followup.send("Nie można znaleźć pola!", ephemeral=True)
         
         return await interaction.edit_original_response(embed=self.build_embed())
 

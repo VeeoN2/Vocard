@@ -513,7 +513,7 @@ class InteractiveController(discord.ui.View):
     async def on_error(self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item):
         if isinstance(error, views.ButtonOnCooldown):
             sec = int(error.retry_after)
-            await interaction.response.send_message(f"You're on cooldown for {sec} second{'' if sec == 1 else 's'}!", ephemeral=True)
+            await interaction.response.send_message(f"Jesteś ignorowany jeszcze przez {sec}s!", ephemeral=True)
         
         elif isinstance(error, Exception):
             await interaction.response.send_message(error)

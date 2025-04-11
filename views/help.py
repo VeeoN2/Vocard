@@ -31,13 +31,13 @@ class HelpDropdown(discord.ui.Select):
         self.view: HelpView
 
         super().__init__(
-            placeholder="Select Category!",
+            placeholder="Wybierz kategorię:",
             min_values=1, max_values=1,
             options=[
-                discord.SelectOption(emoji="🆕", label="News", description="View new updates of Vocard."),
-                discord.SelectOption(emoji="🕹️", label="Tutorial", description="How to use Vocard."),
+                discord.SelectOption(emoji="🆕", label="Opis", description="Opis bota."),
+                discord.SelectOption(emoji="🕹️", label="Tutorial", description="Jak używać bota."),
             ] + [
-                discord.SelectOption(emoji=emoji, label=f"{category} Commands", description=f"This is {category.lower()} Category.")
+                discord.SelectOption(emoji=emoji, label=f"{category}", description=f"Komendy z kategorii: {category.lower()}.")
                 for category, emoji in zip(categories, ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"])
             ],
             custom_id="select"
@@ -56,11 +56,11 @@ class HelpView(discord.ui.View):
         self.response: discord.Message = None
         self.categories: list[str] = [ name.capitalize() for name, cog in bot.cogs.items() if len([c for c in cog.walk_commands()]) ]
 
-        self.add_item(discord.ui.Button(label='Website', emoji='🌎', url='https://vocard.xyz'))
-        self.add_item(discord.ui.Button(label='Document', emoji=':support:915152950471581696', url='https://docs.vocard.xyz'))
-        self.add_item(discord.ui.Button(label='Github', emoji=':github:1098265017268322406', url='https://github.com/ChocoMeow/Vocard'))
-        self.add_item(discord.ui.Button(label='Donate', emoji=':patreon:913397909024800878', url='https://www.patreon.com/Vocard'))
-        self.add_item(HelpDropdown(self.categories))
+        self.add_item(discord.ui.Button(label='Pomoc', emoji=':support:915152950471581696', url='https://discord.com/users/406859750375030784'))
+#        self.add_item(discord.ui.Button(label='Invite', emoji=':invite:915152589056790589', url='https://discord.com/api/oauth2/authorize?client_id=1191483380332761248&permissions=8&scope=bot+applications.commands'.format(func.tokens.client_id)))
+        self.add_item(discord.ui.Button(label='Github', emoji=':github:1098265017268322406', url='https://github.com/VeeoN2/Vocard/tree/full_polish'))
+#        self.add_item(discord.ui.Button(label='Donate', emoji=':patreon:913397909024800878', url='https://www.patreon.com/Vocard'))
+        self.add_item(HelpDropdown(self.categorys))
     
     async def on_error(self, error, item, interaction) -> None:
         return
@@ -80,24 +80,24 @@ class HelpView(discord.ui.View):
     def build_embed(self, category: str) -> discord.Embed:
         category = category.lower()
         if category == "news":
-            embed = discord.Embed(title="Vocard Help Menu", url="https://discord.com/channels/811542332678996008/811909963718459392/1069971173116481636", color=func.settings.embed_color)
+            embed = discord.Embed(title="Pomoc RADIO PUBLIC ++", url="https://discord.com/users/406859750375030784", color=func.settings.embed_color)
             embed.add_field(
-                name=f"Available Categories: [{2 + len(self.categories)}]",
-                value="```py\n👉 News\n2. Tutorial\n{}```".format("".join(f"{i}. {c}\n" for i, c in enumerate(self.categories, start=3))),
+                name=f"Dostępne kategorie: [{2 + len(self.categorys)}]",
+                value="```py\n👉 Informacje\n2. Poradnik\n{}```".format("".join(f"{i}. {c}\n" for i, c in enumerate(self.categorys, start=3))),
                 inline=True
             )
 
-            update = "Vocard is a simple music bot. It leads to a comfortable experience which is user-friendly, It supports YouTube, Soundcloud, Spotify, Twitch and more!"
-            embed.add_field(name="📰 Information:", value=update, inline=True)
-            embed.add_field(name="Get Started", value="```Join a voice channel and /play {Song/URL} a song. (Names, Youtube Video Links or Playlist links or Spotify links are supported on Vocard)```", inline=False)
+            update = "RADIO PUBLIC ++ to bot muzyczny bazowany na projekcie Vocard.\n\n Posiada wygodny panel kontrolny www (radio.veeon.pl) oraz obsługuje linki z YouTube, Spotify, Soundcloud, Twitch.\n\n Tłumaczniem na język polski oraz hostowaniem zajmuje się @veeon__ (zgłaszaj błedy)."
+            embed.add_field(name="📰 Informacje:", value=update, inline=True)
+            embed.add_field(name="Zacznij używać bota", value="```Dołącz do kanału głosowego i użyj /play {Nazwa/URL}. Wspierane są: Tytuły, Linki do video oraz playlist Youtube lub linki z Spotify```", inline=False)
             
             return embed
 
-        embed = discord.Embed(title=f"Category: {category.capitalize()}", color=func.settings.embed_color)
-        embed.add_field(name=f"Categories: [{2 + len(self.categories)}]", value="```py\n" + "\n".join(("👉 " if c == category.capitalize() else f"{i}. ") + c for i, c in enumerate(['News', 'Tutorial'] + self.categories, start=1)) + "```", inline=True)
+        embed = discord.Embed(title=f"Kategoria: {category.capitalize()}", color=func.settings.embed_color)
+        embed.add_field(name=f"Kategorie: [{2 + len(self.categorys)}]", value="```py\n" + "\n".join(("👉 " if c == category.capitalize() else f"{i}. ") + c for i, c in enumerate(['Informacje', 'Poradnik'] + self.categorys, start=1)) + "```", inline=True)
 
         if category == 'tutorial':
-            embed.description = "How can use Vocard? Some simple commands you should know now after watching this video."
+            embed.description = "Jak używać bota? Podstawowa obsługa pokazana została w filmiku poniżej."
             embed.set_image(url="https://cdn.discordapp.com/attachments/674788144931012638/917656288899514388/final_61aef3aa7836890135c6010c_669380.gif")
         else:
             cog = [c for _, c in self.bot.cogs.items() if _.lower() == category][0]
@@ -105,7 +105,7 @@ class HelpView(discord.ui.View):
             commands = [command for command in cog.walk_commands()]
             embed.description = cog.description
             embed.add_field(
-                name=f"{category} Commands: [{len(commands)}]",
+                name=f"{category} - komendy: [{len(commands)}]",
                 value="```{}```".format("".join(f"/{command.qualified_name}\n" for command in commands if not command.qualified_name == cog.qualified_name))
             )
 

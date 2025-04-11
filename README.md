@@ -1,6 +1,10 @@
 <a href="https://discord.gg/wRCgB7vBQv">
     <img src="https://img.shields.io/discord/811542332678996008?color=7289DA&label=Support&logo=discord&style=for-the-badge" alt="Discord">
 </a>
+# Branch Info
+This branch is my clumsy attempt to fully tranlate all user-visible texts in discord gui to Polish language - not only language pack but also all english by default strings. Current version 2.7.0
+It also has changes to personalize the bot to my needs, such as changing its name, etc. So if you want to use this code be aware of that.
+Contact me for more info.
 
 # Vocard Bot
 Vocard is a highly customizable Discord music bot, designed to deliver a user-friendly experience. It offers support for a wide range of streaming platforms including Youtube, Soundcloud, Spotify, Twitch, and more.

@@ -100,10 +100,10 @@ class Basic(commands.Cog):
         return [app_commands.Choice(name=truncate_string(f"🕒 {track['author']} - {track['title']}", 100), value=track['uri']) for track in history.values() if len(track['uri']) <= 100][:25]
             
     @commands.hybrid_command(name="connect", aliases=get_aliases("connect"))
-    @app_commands.describe(channel="Provide a channel to connect.")
+    @app_commands.describe(channel="Podaj nazwę kanału do którego bot ma dołączyć.")
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def connect(self, ctx: commands.Context, channel: discord.VoiceChannel = None) -> None:
-        "Connect to a voice channel."
+        "Połącz bota do kanału głosowego"
         try:
             player = await voicelink.connect_channel(ctx, channel)
         except discord.errors.ClientException:
@@ -113,14 +113,14 @@ class Basic(commands.Cog):
                 
     @commands.hybrid_command(name="play", aliases=get_aliases("play"))
     @app_commands.describe(
-        query="Input a query or a searchable link.",
-        start="Specify a time you would like to start, e.g. 1:00",
-        end="Specify a time you would like to end, e.g. 4:00"
+        query="Podaj nazwę lub link do utworu.",
+        start="Podaj czas od którego zacząć odtwarzanie, np. 1:00",
+        end="Podaj czas do którego odtwarzać, np. 4:00"
     )
     @app_commands.autocomplete(query=play_autocomplete)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def play(self, ctx: commands.Context, *, query: str, start: str = "0", end: str = "0") -> None:
-        "Loads your input and added it to the queue."
+        "Dodaj podany utwór na koniec kolejki."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             player = await voicelink.connect_channel(ctx)
@@ -206,8 +206,8 @@ class Basic(commands.Cog):
 
     @commands.hybrid_command(name="search", aliases=get_aliases("search"))
     @app_commands.describe(
-        query="Input the name of the song.",
-        platform="Select the platform you want to search."
+        query="Podaj nazwę utworu.",
+        platform="Wybierz platformę na której chcesz wyszukać podany utwór."
     )
     @app_commands.choices(platform=[
         app_commands.Choice(name=search_type.display_name, value=search_type.name)
@@ -215,7 +215,7 @@ class Basic(commands.Cog):
     ])
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def search(self, ctx: commands.Context, *, query: str, platform: str = SearchType.YOUTUBE.name):
-        "Loads your input and added it to the queue."
+        "Wyszukaj utwory po tytule."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             player = await voicelink.connect_channel(ctx)
@@ -251,14 +251,14 @@ class Basic(commands.Cog):
 
     @commands.hybrid_command(name="playtop", aliases=get_aliases("playtop"))
     @app_commands.describe(
-        query="Input a query or a searchable link.",
-        start="Specify a time you would like to start, e.g. 1:00",
-        end="Specify a time you would like to end, e.g. 4:00"
+        query="Podaj nazwę lub link do utworu.",
+        start="Podaj czas od którego zacząć odtwarzanie, np. 1:00",
+        end="Podaj czas do którego odtwarzać, np. 4:00"
     )
     @app_commands.autocomplete(query=play_autocomplete)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def playtop(self, ctx: commands.Context, *, query: str, start: str = "0", end: str = "0"):
-        "Adds a song with the given url or query on the top of the queue."
+        "Dodaj podany utwór na początek kolejki."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             player = await voicelink.connect_channel(ctx)
@@ -296,13 +296,13 @@ class Basic(commands.Cog):
 
     @commands.hybrid_command(name="forceplay", aliases=get_aliases("forceplay"))
     @app_commands.describe(
-        query="Input a query or a searchable link.",
-        start="Specify a time you would like to start, e.g. 1:00",
-        end="Specify a time you would like to end, e.g. 4:00"
+        query="Podaj nazwę lub link do utworu.",
+        start="Podaj czas od którego zacząć odtwarzanie, np. 1:00",
+        end="Podaj czas do którego odtwarzać, np. 4:00"
     )
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def forceplay(self, ctx: commands.Context, *, query: str, start: str = "0", end: str = "0"):
-        "Enforce playback using the given URL or query."
+        "Wymuś natychmiastowe odtwarzanie podanego utworu."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             player = await voicelink.connect_channel(ctx)
@@ -341,7 +341,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="pause", aliases=get_aliases("pause"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def pause(self, ctx: commands.Context):
-        "Pause the music."
+        "Zapauzuj odtwarzanie."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -363,7 +363,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="resume", aliases=get_aliases("resume"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def resume(self, ctx: commands.Context):
-        "Resume the music."
+        "Wznów odtwarzanie."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -383,10 +383,10 @@ class Basic(commands.Cog):
         await send(ctx, "resumed", ctx.author)
 
     @commands.hybrid_command(name="skip", aliases=get_aliases("skip"))
-    @app_commands.describe(index="Enter a index that you want to skip to.")
+    @app_commands.describe(index="Podaj numer utworu do którego chcesz pominąć.")
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def skip(self, ctx: commands.Context, index: int = 0):
-        "Skips to the next song or skips to the specified song."
+        "Pomiń do następnego utworu lub do konkretnej pozycji w kolejce."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -417,10 +417,10 @@ class Basic(commands.Cog):
         await player.stop()
 
     @commands.hybrid_command(name="back", aliases=get_aliases("back"))
-    @app_commands.describe(index="Enter a index that you want to skip back to.")
+    @app_commands.describe(index="Podaj indeks utworu do którego chcesz cofnąć.")
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def back(self, ctx: commands.Context, index: int = 1):
-        "Skips back to the previous song or skips to the specified previous song."
+        "Cofnij do poprzedniego utworu lub do konkretnej poprzedniej pozycji w kolejce."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -451,7 +451,7 @@ class Basic(commands.Cog):
     @app_commands.describe(position="Input position. Exmaple: 1:20.")
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def seek(self, ctx: commands.Context, position: str):
-        "Change the player position."
+        "Zmień pozycje odtwarzania utworu (czas)."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -476,7 +476,7 @@ class Basic(commands.Cog):
     )
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def queue(self, ctx: commands.Context):
-        "Display the players queue songs in your queue."
+        "Wyświetl utwory znajdujące się w kolejce odtwarzania."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -492,7 +492,7 @@ class Basic(commands.Cog):
     @queue.command(name="export", aliases=get_aliases("export"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def export(self, ctx: commands.Context):
-        "Exports the entire queue to a text file"
+        "Wyeksportuj całą kolejkę do pliku."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -507,7 +507,7 @@ class Basic(commands.Cog):
 
         tracks = player.queue.tracks(True)
         temp = ""
-        raw = "----------->Raw Info<-----------\n"
+        raw = "------->Surowe informacje<-------\n"
 
         total_length = 0
         for index, track in enumerate(tracks, start=1):
@@ -517,7 +517,7 @@ class Basic(commands.Cog):
                 raw += ","
             total_length += track.length
 
-        temp = "!Remember do not change this file!\n------------->Info<-------------\nGuild: {} ({})\nRequester: {} ({})\nTracks: {} - {}\n------------>Tracks<------------\n".format(
+        temp = "!Pamiętaj by nie modyfikować tego pliku!\n------------->Informacje<-------------\nSerwer: {} ({})\nNa żądanie: {} ({})\nUtwory: {} - {}\n------------>Utwory<------------\n".format(
             ctx.guild.name, ctx.guild.id,
             ctx.author.display_name, ctx.author.id,
             len(tracks), ctime(total_length)
@@ -529,7 +529,7 @@ class Basic(commands.Cog):
     @queue.command(name="import", aliases=get_aliases("import"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def _import(self, ctx: commands.Context, attachment: discord.Attachment):
-        "Imports the text file and adds the track to the current queue."
+        "Zaimportuj utwory z pliku i dodaj je do kolejki."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             player = await voicelink.connect_channel(ctx)
@@ -559,7 +559,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="history", aliases=get_aliases("history"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def history(self, ctx: commands.Context):
-        "Display the players queue songs in your history queue."
+        "Wyświetl historię kolejki (utowry które już były odtworzone)."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -576,7 +576,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="leave", aliases=get_aliases("leave"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def leave(self, ctx: commands.Context):
-        "Disconnects the bot from your voice channel and chears the queue."
+        "Rozłącz bota z kanału głosowego i wyczyść jego koejkę odtwarzania."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -597,7 +597,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="nowplaying", aliases=get_aliases("nowplaying"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def nowplaying(self, ctx: commands.Context):
-        "Shows details of the current track."
+        "Zobacz szczegóły o odtwarzanej obecnie piosence."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -608,14 +608,14 @@ class Basic(commands.Cog):
         await nowplay(ctx, player)
 
     @commands.hybrid_command(name="loop", aliases=get_aliases("loop"))
-    @app_commands.describe(mode="Choose a looping mode.")
+    @app_commands.describe(mode="Wybierz tryb pętli.")
     @app_commands.choices(mode=[
         app_commands.Choice(name=loop_type.name.title(), value=loop_type.name)
         for loop_type in LoopType
     ])
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def loop(self, ctx: commands.Context, mode: str):
-        "Changes Loop mode."
+        "Zmień tryb pętli."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -627,14 +627,14 @@ class Basic(commands.Cog):
         await send(ctx, "repeat", mode.capitalize())
 
     @commands.hybrid_command(name="clear", aliases=get_aliases("clear"))
-    @app_commands.describe(queue="Choose a queue that you want to clear.")
+    @app_commands.describe(queue="Wybierz co chesz wyczyścić.")
     @app_commands.choices(queue=[
-        app_commands.Choice(name='Queue', value='queue'),
-        app_commands.Choice(name='History', value='history')
+        app_commands.Choice(name='Kolejka', value='queue'),
+        app_commands.Choice(name='Historia kolejki', value='history')
     ])
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def clear(self, ctx: commands.Context, queue: str = "queue"):
-        "Remove all the tracks in your queue or history queue."
+        "Usuń wszystkie pozycje z kolejki i jej historii."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -647,13 +647,13 @@ class Basic(commands.Cog):
 
     @commands.hybrid_command(name="remove", aliases=get_aliases("remove"))
     @app_commands.describe(
-        position1="Input a position from the queue to be removed.",
-        position2="Set the range of the queue to be removed.",
-        member="Remove tracks requested by a specific member."
+        position1="Podaj pozycję z kolejki, którą chcesz usunąć.",
+        position2="Podaj zakres kolejki, który chcesz usunąć.",
+        member="Usuń pozycje z kolejki dodane przez konkretnego użytkownika."
     )
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def remove(self, ctx: commands.Context, position1: int, position2: int = None, member: discord.Member = None):
-        "Removes specified track or a range of tracks from the queue."
+        "Usuń konkretną pozycję lub zakres pozycji z kolejki."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -665,10 +665,10 @@ class Basic(commands.Cog):
         await send(ctx, "removed", len(removed_tracks.keys()))
 
     @commands.hybrid_command(name="forward", aliases=get_aliases("forward"))
-    @app_commands.describe(position="Input an amount that you to forward to. Exmaple: 1:20")
+    @app_commands.describe(position="Podaj ilość czasu o jaką chcesz przewinąć do przodu. np. 1:20")
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def forward(self, ctx: commands.Context, position: str = "10"):
-        "Forwards by a certain amount of time in the current track. The default is 10 seconds."
+        "Przewiń utwór do przodu o podany czas. Domyślnie jest to 10 sekund."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -686,10 +686,10 @@ class Basic(commands.Cog):
         await send(ctx, "forward", ctime(player.position + num))
 
     @commands.hybrid_command(name="rewind", aliases=get_aliases("rewind"))
-    @app_commands.describe(position="Input an amount that you to rewind to. Exmaple: 1:20")
+    @app_commands.describe(position="Podaj ilość czasu o jaką chcesz przewinąć do tyłu. Przykład: 1:20")
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def rewind(self, ctx: commands.Context, position: str = "10"):
-        "Rewind by a certain amount of time in the current track. The default is 10 seconds."
+        "Przewiń utwór do tyłu o podany czas. Domyślnie jest to 10 sekund."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -709,7 +709,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="replay", aliases=get_aliases("replay"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def replay(self, ctx: commands.Context):
-        "Reset the progress of the current song."
+        "Zresetuj postęp w odtwarzaniu obecnego utworu (cofnij do początku)."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -726,7 +726,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="shuffle", aliases=get_aliases("shuffle"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def shuffle(self, ctx: commands.Context):
-        "Randomizes the tracks in the queue."
+        "Wymieszaj kolejność odtwarzania w kolejce (nie można cofnąć)."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -744,12 +744,12 @@ class Basic(commands.Cog):
 
     @commands.hybrid_command(name="swap", aliases=get_aliases("swap"))
     @app_commands.describe(
-        position1="The track to swap. Example: 2",
-        position2="The track to swap with position1. Exmaple: 1"
+        position1="Utwór do zamiany. Przykład: 2",
+        position2="Utwór do zamiany z pozycją 1. Przykład: 1"
     )
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def swap(self, ctx: commands.Context, position1: int, position2: int):
-        "Swaps the specified song to the specified song."
+        "Zamień pozycję dwóch podanych pozycji w kolejce."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -762,12 +762,12 @@ class Basic(commands.Cog):
 
     @commands.hybrid_command(name="move", aliases=get_aliases("move"))
     @app_commands.describe(
-        target="The track to move. Example: 2",
-        to="The new position to move the track to. Exmaple: 1"
+        target="Utwór do przesunięcia. Przykład: 2",
+        to="Nowa pozycja na którą przenieść utwór. Przykład: 1"
     )
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def move(self, ctx: commands.Context, target: int, to: int):
-        "Moves the specified song to the specified position."
+        "Przesuń utwór na konkretną pozycję w kolejce."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -779,10 +779,10 @@ class Basic(commands.Cog):
         await send(ctx, "moved", moved_track, to)
 
     @commands.hybrid_command(name="lyrics", aliases=get_aliases("lyrics"))
-    @app_commands.describe(title="Searches for your query and displays the reutned lyrics.")
+    @app_commands.describe(title="Wyszukuje twoje zapytanie i wyświetla znalezione słowa utworu.")
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def lyrics(self, ctx: commands.Context, title: str = "", artist: str = ""):
-        "Displays lyrics for the playing track."
+        "Wyświetl słowa podanego utworu (Genius)"
         if not title:
             player: voicelink.Player = ctx.guild.voice_client
             if not player or not player.is_playing:
@@ -802,10 +802,10 @@ class Basic(commands.Cog):
             view.response = await send(ctx, view.build_embed(), view=view)
 
     @commands.hybrid_command(name="swapdj", aliases=get_aliases("swapdj"))
-    @app_commands.describe(member="Choose a member to transfer the dj role.")
+    @app_commands.describe(member="Wybierz użytkownika, któremu przekazana zostanie rola DJ'a")
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def swapdj(self, ctx: commands.Context, member: discord.Member):
-        "Transfer dj to another."
+        "Przekaż rolę DJ'a."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -828,7 +828,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="autoplay", aliases=get_aliases("autoplay"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def autoplay(self, ctx: commands.Context):
-        "Toggles autoplay mode, it will automatically queue the best songs to play."
+        "Przełącz tryb autoodtwarzania, podobne utowry zostaną dodane do kolejki po jej skończeniu się."
         player: voicelink.Player = ctx.guild.voice_client
         if not player:
             return await send(ctx, "noPlayer", ephemeral=True)
@@ -850,7 +850,7 @@ class Basic(commands.Cog):
     @app_commands.autocomplete(category=help_autocomplete)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def help(self, ctx: commands.Context, category: str = "News") -> None:
-        "Lists all the commands in Vocard."
+        "Wyświetl wszystkie dostępne komendy."
         if category not in self.bot.cogs:
             category = "News"
         view = HelpView(self.bot, ctx.author)
@@ -860,7 +860,7 @@ class Basic(commands.Cog):
     @commands.hybrid_command(name="ping", aliases=get_aliases("ping"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def ping(self, ctx: commands.Context):
-        "Test if the bot is alive, and see the delay between your commands and my response."
+        "Sprawdź czy bot żyje, oraz jakie ma opóźnienie."
         player: voicelink.Player = ctx.guild.voice_client
 
         value = await get_lang(ctx.guild.id, "pingTitle1", "pingfield1", "pingTitle2", "pingfield2")

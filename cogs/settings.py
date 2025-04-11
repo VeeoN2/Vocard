@@ -48,7 +48,7 @@ def status_icon(status: bool) -> str:
 class Settings(commands.Cog, name="settings"):
     def __init__(self, bot) -> None:
         self.bot: commands.Bot = bot
-        self.description = "This category is only available to admin permissions on the server."
+        self.description = "Ta kategoria komend jest dostępna tylko dla administratorów serwera."
     
     @commands.hybrid_group(
         name="settings",
@@ -64,7 +64,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def prefix(self, ctx: commands.Context, prefix: str):
-        "Change the default prefix for message commands."
+        "Zmień domyślny prefix komend w formie wiadomości"
         if not self.bot.intents.message_content:
             return await send(ctx, "missingIntents", "MESSAGE_CONTENT", ephemeral=True)
         
@@ -75,7 +75,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def language(self, ctx: commands.Context, language: str):
-        "You can choose your preferred language, the bot message will change to the language you set."
+        "Wybierz swój preferowany język, wiadomości bota będą w nim wyświetlane."
         language = language.upper()
         if language not in LANGS:
             return await send(ctx, "languageNotFound")
@@ -93,7 +93,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def dj(self, ctx: commands.Context, role: discord.Role = None):
-        "Set a DJ role or remove DJ role."
+        "Ustaw lub usuń rolę DJ'a."
         await update_settings(ctx.guild.id, {"$set": {'dj': role.id}} if role else {"$unset": {'dj': None}})
         await send(ctx, 'setDJ', f"<@&{role.id}>" if role else "None")
 
@@ -105,7 +105,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def queue(self, ctx: commands.Context, mode: str):
-        "Change to another type of queue mode."
+        "Zmień typ kolejki"
         mode = "FairQueue" if mode.lower() == "fairqueue" else "Queue"
         await update_settings(ctx.guild.id, {"$set": {"queueType": mode}})
         await send(ctx, "setqueue", mode)
@@ -114,7 +114,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def playforever(self, ctx: commands.Context):
-        "Toggles 24/7 mode, which disables automatic inactivity-based disconnects."
+        "Przełącz tryb 24/7, który wyłącza automatyczne opuszcanie kanału w przypadku nieaktywności."
         settings = await get_settings(ctx.guild.id)
         toggle = settings.get('24/7', False)
         await update_settings(ctx.guild.id, {"$set": {'24/7': not toggle}})
@@ -124,7 +124,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def bypassvote(self, ctx: commands.Context):
-        "Toggles voting system."
+        "Przełącz system głosowania."
         settings = await get_settings(ctx.guild.id)
         toggle = settings.get('votedisable', True)
         await update_settings(ctx.guild.id, {"$set": {'votedisable': not toggle}})
@@ -134,7 +134,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def view(self, ctx: commands.Context):
-        "Show all the bot settings in your server."
+        "Pokaż aktualne ustawienia bota na tym serwerze."
         settings = await get_settings(ctx.guild.id)
 
         texts = await get_lang(ctx.guild.id, "settingsMenu", "settingsTitle", "settingsValue", "settingsTitle2", "settingsValue2", "settingsTitle3", "settingsPermTitle", "settingsPermValue")
@@ -176,11 +176,11 @@ class Settings(commands.Cog, name="settings"):
         await send(ctx, embed)
 
     @settings.command(name="volume", aliases=get_aliases("volume"))
-    @app_commands.describe(value="Input a integer.")
+    @app_commands.describe(value="Podaj liczbę całkowitą.")
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def volume(self, ctx: commands.Context, value: commands.Range[int, 1, 150]):
-        "Set the player's volume."
+        "Ustaw głośność odtwarzacza."
         player: voicelink.Player = ctx.guild.voice_client
         if player:
             await player.set_volume(value, ctx.author)
@@ -192,7 +192,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def togglecontroller(self, ctx: commands.Context):
-        "Toggles the music controller."
+        "Przełącz kontroler muzyki."
         settings = await get_settings(ctx.guild.id)
         toggle = not settings.get('controller', True)
 
@@ -210,7 +210,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def duplicatetrack(self, ctx: commands.Context):
-        "Toggle Vocard to prevent duplicate songs from queuing."
+        "Przełącz tryb unikania zduplikowanych pozycji w kolejce."
         settings = await get_settings(ctx.guild.id)
         toggle = not settings.get('duplicateTrack', False)
         player: voicelink.Player = ctx.guild.voice_client
@@ -224,7 +224,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def customcontroller(self, ctx: commands.Context):
-        "Customizes music controller embeds."
+        "Dostosuj wiadomość osadzoną kontrolera muzyki."
         settings = await get_settings(ctx.guild.id)
         controller_settings = settings.get("default_controller", func.settings.controller)
 
@@ -235,7 +235,7 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def controllermsg(self, ctx: commands.Context):
-        "Toggles to send a message when clicking the button in the music controller."
+        "Przełącz wysyłanie wiadomości po kliknięciu przycisku w kontrolerze muzyki."
         settings = await get_settings(ctx.guild.id)
         toggle = not settings.get('controller_msg', True)
 
@@ -246,18 +246,18 @@ class Settings(commands.Cog, name="settings"):
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def stageannounce(self, ctx: commands.Context, template: str = None):
-        "Customize the channel topic template"
+        """Dostosuj szablon tematu kanału"""
         await update_settings(ctx.guild.id, {"$set": {'stage_announce_template': template}})
         await send(ctx, "setStageAnnounceTemplate")
 
     @settings.command(name="setupchannel", aliases=get_aliases("setupchannel"))
     @app_commands.describe(
-        channel="Provide a request channel. If not, a text channel will be generated."
+        channel="Wybierz kanał do obsługi bota, w przypadku braku zdefiniowania zostanie utworzony nowy kanał tekstowy."
     )
     @commands.has_permissions(manage_guild=True)
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
     async def setupchannel(self, ctx: commands.Context, channel: discord.TextChannel = None) -> None:
-        "Sets up a dedicated channel for song requests in your server."
+        "Wybierz dedykowany kanał do obsługi bota"
         if not self.bot.intents.message_content:
             return await send(ctx, "missingIntents", "MESSAGE_CONTENT", ephemeral=True)
         
@@ -287,29 +287,30 @@ class Settings(commands.Cog, name="settings"):
         }}})
         await send(ctx, "createSongRequestChannel", channel.mention)
 
+
     @app_commands.command(name="debug")
     async def debug(self, interaction: discord.Interaction):
         if interaction.user.id not in func.settings.bot_access_user:
-            return await interaction.response.send_message("You are not able to use this command!")
+            return await interaction.response.send_message("Nie możesz używać tej komendy!")
 
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage(func.ROOT_DIR)
 
         available_memory, total_memory = memory.available, memory.total
         used_disk_space, total_disk_space = disk.used, disk.total
-        embed = discord.Embed(title="📄 Debug Panel", color=func.settings.embed_color)
-        embed.description = "```==    System Info    ==\n" \
+        embed = discord.Embed(title="📄 Panel Debugowania", color=func.settings.embed_color)
+        embed.description = "```==    Informacje o systemie    ==\n" \
                             f"• CPU:     {psutil.cpu_freq().current}Mhz ({psutil.cpu_percent()}%)\n" \
                             f"• RAM:     {format_bytes(total_memory - available_memory)}/{format_bytes(total_memory, True)} ({memory.percent}%)\n" \
-                            f"• DISK:    {format_bytes(total_disk_space - used_disk_space)}/{format_bytes(total_disk_space, True)} ({disk.percent}%)```"
+                            f"• DYSK:    {format_bytes(total_disk_space - used_disk_space)}/{format_bytes(total_disk_space, True)} ({disk.percent}%)```"
 
         embed.add_field(
-            name="🤖 Bot Information",
-            value=f"```• VERSION: {func.settings.version}\n" \
-                  f"• LATENCY: {self.bot.latency:.2f}ms\n" \
-                  f"• GUILDS:  {len(self.bot.guilds)}\n" \
-                  f"• USERS:   {sum([guild.member_count or 0 for guild in self.bot.guilds])}\n" \
-                  f"• PLAYERS: {len(self.bot.voice_clients)}```",
+            name="🤖 Informacje o bocie",
+            value=f"```• WERSJA: {func.settings.version}\n" \
+                  f"• OPÓŹNIENIE: {self.bot.latency:.2f}ms\n" \
+                  f"• ILOŚĆ SERWERÓW:  {len(self.bot.guilds)}\n" \
+                  f"• UŻYTKOWNIKÓW:   {sum([guild.member_count for guild in self.bot.guilds])}\n" \
+                  f"• LICZBA ODTWARZACZY: {len(self.bot.voice_clients)}```",
             inline=False
         )
 
@@ -318,19 +319,19 @@ class Settings(commands.Cog, name="settings"):
             if node._available:
                 total_memory = node.stats.used + node.stats.free
                 embed.add_field(
-                    name=f"{name} Node - 🟢 Connected",
-                    value=f"```• ADDRESS: {node._host}:{node._port}\n" \
-                        f"• PLAYERS: {len(node._players)}\n" \
+                    name=f"Serwer: {name} - 🟢 Połączony",
+                    value=f"```• ADRES: {node._host}:{node._port}\n" \
+                        f"• LICZBA ODTWARZACZY: {len(node._players)}\n" \
                         f"• CPU:     {node.stats.cpu_process_load:.1f}%\n" \
                         f"• RAM:     {format_bytes(node.stats.free)}/{format_bytes(total_memory, True)} ({(node.stats.free/total_memory) * 100:.1f}%)\n"
-                        f"• LATENCY: {node.latency:.2f}ms\n" \
-                        f"• UPTIME:  {func.time(node.stats.uptime)}```"
+                        f"• OPÓŹNIENIE: {node.latency:.2f}ms\n" \
+                        f"• CZAS DZIAŁANIA:  {func.time(node.stats.uptime)}```"
                 )
             else:
                 embed.add_field(
-                    name=f"{name} Node - 🔴 Disconnected",
-                    value=f"```• ADDRESS: {node._host}:{node._port}\n" \
-                        f"• PLAYERS: {len(node._players)}\nNo extra data is available for display```",
+                    name=f"Serwer: {name} - 🔴 Rozłączony",
+                    value=f"```• ADRES: {node._host}:{node._port}\n" \
+                        f"• LICZBA ODTWARZACZY: {len(node._players)}\nBrak innych danych do wyświetlenia```",
                 )
 
         await interaction.response.send_message(embed=embed, view=DebugView(self.bot), ephemeral=True)
