@@ -290,6 +290,7 @@ class Settings(commands.Cog, name="settings"):
 
     @app_commands.command(name="debug")
     async def debug(self, interaction: discord.Interaction):
+        """Informacje do debugowania bota"""
         if interaction.user.id not in func.settings.bot_access_user:
             return await interaction.response.send_message("Nie możesz używać tej komendy!")
 

@@ -194,7 +194,7 @@ class ExecutePanel(discord.ui.View):
                 break
 
     def clear_code(self, content: str):
-        """Automatically removes code blocks from the code."""
+        """Automatycznie usuwa bloki kodu."""
         if content.startswith('```') and content.endswith('```'):
             return '\n'.join(content.split('\n')[1:-1])
 
@@ -207,7 +207,7 @@ class ExecutePanel(discord.ui.View):
             await self.message.edit(view=self)
 
     async def execute(self, interaction: discord.Interaction):
-        modal = ExecuteModal(self.code, title="Enter Your Code")
+        modal = ExecuteModal(self.code, title="Wpisz swój kod")
         await interaction.response.send_modal(modal)
         await modal.wait()
 
@@ -245,17 +245,17 @@ class ExecutePanel(discord.ui.View):
         else:
             await self.message.edit(content=f"```{text}```", view=self)
 
-    @discord.ui.button(label="End", emoji="🗑️", custom_id="end")
+    @discord.ui.button(label="Zakończ", emoji="🗑️", custom_id="end")
     async def end(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.message:
             await self.message.delete()
         self.stop()
 
-    @discord.ui.button(label="Rerun", emoji="🔄", custom_id="rerun")
+    @discord.ui.button(label="Uruchom ponownie", emoji="🔄", custom_id="rerun")
     async def rerun(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.execute(interaction)
 
-    @discord.ui.button(label="Error", emoji="👾", custom_id="Error")
+    @discord.ui.button(label="Błąd", emoji="👾", custom_id="Error")
     async def error(self, interaction: discord.Interaction, button: discord.ui.Button):
         result = ''.join(traceback.format_exception(self._error, self._error, self._error.__traceback__))
         await self.message.edit(content=f"```py\n{result}```")

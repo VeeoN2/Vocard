@@ -72,7 +72,7 @@ async def nowplay(ctx: commands.Context, player: voicelink.Player):
 class Basic(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.description = "This category is available to anyone on this server. Voting is required in certain commands."
+        self.description = "Ta kategoria jest dostępna dla każdego na tym serwerze, niektóre komendy mogą wymagać głosowania."
         self.ctx_menu = app_commands.ContextMenu(
             name="play",
             callback=self._play

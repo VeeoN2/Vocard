@@ -30,7 +30,7 @@ import function as func
 from discord.ext import commands
 
 class Listeners(commands.Cog):
-    """Music Cog."""
+    """Muzyczny cog"""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
