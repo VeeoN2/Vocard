@@ -310,7 +310,7 @@ async def toggleAutoplay(player: Player, member: Member, data: Dict) -> Dict:
 
     if not player.is_playing:
         await player.do_next()
-
+    await player.send_ws({"op": "toggleAutoplay", "status": check})
     return {
         "op": "toggleAutoplay",
         "status": check,
