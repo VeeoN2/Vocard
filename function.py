@@ -154,7 +154,7 @@ def get_aliases(name: str) -> list:
     return settings.aliases_settings.get(name, [])
 
 def check_roles() -> tuple[str, int, int]:
-    return 'Normal', 5, 500
+    return 'Normal', 25, 1500
 
 def truncate_string(text: str, length: int = 40) -> str:
     return text[:length - 3] + "..." if len(text) > length else text
