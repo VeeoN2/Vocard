@@ -179,3 +179,4 @@ settings.json
 lavalink/plugins
 logs
 lavalink/application.yml
+*.ignore
