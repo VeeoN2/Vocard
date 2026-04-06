@@ -177,5 +177,5 @@ cython_debug/
 # Custom file
 settings.json
 lavalink/application.yml
-lavalink/plugins
+
 logs
